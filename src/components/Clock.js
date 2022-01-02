@@ -35,6 +35,10 @@ class Clock extends React.Component {
   }
 
   componentDidUpdate() {
+    document.title = `${this.mns(this.state.current_time)}-${
+      this.state.current_type
+    }`;
+
     if (
       this.state.current_time === 0 &&
       this.state.running &&
