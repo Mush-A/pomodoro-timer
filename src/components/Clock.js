@@ -12,6 +12,8 @@ class Clock extends React.Component {
       paused: false,
       paused_time: 0,
       timerID: null,
+      totalSessionTime: 0,
+      totalBreakTime: 0,
     };
     this.countDown = this.countDown.bind(this);
     this.mns = this.mns.bind(this);
@@ -27,9 +29,22 @@ class Clock extends React.Component {
   countDown(time) {
     let start = Date.now();
     let timer = () => {
-      this.setState({
-        current_time: time - (((Date.now() - start) / 1000) | 0),
-      });
+      this.setState(
+        {
+          current_time: time - (((Date.now() - start) / 1000) | 0),
+        },
+        () => {
+          if (this.state.current_type === "SESSION") {
+            this.setState((state) => ({
+              totalSessionTime: state.totalSessionTime + 1,
+            }));
+          } else {
+            this.setState((state) => ({
+              totalBreakTime: state.totalBreakTime + 1,
+            }));
+          }
+        }
+      );
     };
     this.setState({ timerID: setInterval(timer, 1000) });
   }
@@ -172,7 +187,7 @@ class Clock extends React.Component {
   handleReset() {
     clearInterval(this.state.timerID);
     this.audioStop();
-    this.setState({
+    this.setState((state) => ({
       session_duration: 25 * 60,
       break_duration: 5 * 60,
       current_type: "SESSION",
@@ -181,7 +196,9 @@ class Clock extends React.Component {
       paused: false,
       paused_time: 0,
       timerID: null,
-    });
+      totalSessionTime: Math.floor(state.totalSessionTime / 60) * 60,
+      totalBreakTime: Math.floor(state.totalBreakTime / 60) * 60,
+    }));
   }
 
   audioPlay() {
@@ -261,7 +278,12 @@ class Clock extends React.Component {
                 : this.ringStyleBreak
             }
           >
+            <div id="total-break">{this.m(this.state.totalBreakTime)}</div>
+
+            <div id="total-session">{this.m(this.state.totalSessionTime)}</div>
+
             <div id="timer-label">{this.state.current_type}</div>
+
             <div
               id="time-left"
               style={

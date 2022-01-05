@@ -83,6 +83,20 @@ body {
   top: 3rem;
 }
 
+#total-break {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  color: #333333;
+}
+
+#total-session {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #333333;
+}
+
 #reset-wrapper {
   display: flex;
   justify-content: center;
